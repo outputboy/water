@@ -1,9 +1,47 @@
 import type { NextPage } from 'next'
+import {useState} from 'react';
 import Head from 'next/head'
-import Image from 'next/image'
+import {
+  getBhkType,
+  getCorporationWaterRatio,
+  getBorewellWaterRatio,
+  tankerWaterRate,
+  getBhkRatioRate,
+  getGuests,
+  getAllWaterUse
+} from "./service";
 import styles from '../styles/Home.module.css'
 
+
 const Home: NextPage = () => {
+  const [result, setResult] = useState('');
+
+  const showFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      if (e.target) {
+        const text = JSON.stringify(e.target.result);
+
+        if(text) {
+          const bhkType = getBhkType(text);
+          const corporationWaterRatio = getCorporationWaterRatio(text);
+          const borewellWaterRatio = getBorewellWaterRatio(text);
+
+          const allWater = getAllWaterUse(bhkType, getGuests(text));
+          const allRate = getBhkRatioRate(bhkType, corporationWaterRatio, borewellWaterRatio) + tankerWaterRate(getGuests(text) * 10 * 30);
+
+          setResult(allWater + ':' + allRate);
+        } else {
+          console.log("error file");
+        }
+      }
+    };
+    if (e.target.files) {
+      reader.readAsText(e.target.files[0]);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,60 +51,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
+        <h1 className={styles.title}>{result !== "" ? result : `Water management`}</h1>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          <input accept="text/plain" type="file" onChange={showFile} />
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
-  )
+  );
 }
 
 export default Home
