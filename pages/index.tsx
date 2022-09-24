@@ -9,12 +9,12 @@ import {
   getBhkRatioRate,
   getGuests,
   getAllWaterUse
-} from "./service";
+} from "../service/service";
 import styles from '../styles/Home.module.css'
-
 
 const Home: NextPage = () => {
   const [result, setResult] = useState('');
+  const fileFormat: RegExp = /(ALLOT_WATER )(.*?)(BILL)/g
 
   const showFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -23,17 +23,23 @@ const Home: NextPage = () => {
       if (e.target) {
         const text = JSON.stringify(e.target.result);
 
-        if(text) {
+        if (text && text.match(fileFormat)) {
           const bhkType = getBhkType(text);
           const corporationWaterRatio = getCorporationWaterRatio(text);
           const borewellWaterRatio = getBorewellWaterRatio(text);
 
           const allWater = getAllWaterUse(bhkType, getGuests(text));
-          const allRate = getBhkRatioRate(bhkType, corporationWaterRatio, borewellWaterRatio) + tankerWaterRate(getGuests(text) * 10 * 30);
+          const allRate =
+            getBhkRatioRate(
+              bhkType,
+              corporationWaterRatio,
+              borewellWaterRatio
+            ) + tankerWaterRate(getGuests(text));
 
-          setResult(allWater + ':' + allRate);
+          setResult(allWater + ":" + allRate);
         } else {
           console.log("error file");
+          alert("wrong file");
         }
       }
     };

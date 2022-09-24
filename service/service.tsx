@@ -1,7 +1,7 @@
 const bhkTypeRegex: RegExp = /(ALLOT_WATER )(.+?)/g;
-const corporationWaterRegex: RegExp = /(ALLOT_WATER [2-3] )(.*?)(:)/g;
-const borewellWaterRegex: RegExp = /(ALLOT_WATER [2-3] \d:)(.*?)(\\n)/g;
-const guestsRegex: RegExp = /(ADD_GUESTS )(.*?)(\\n)/g;
+const corporationWaterRegex: RegExp = /(ALLOT_WATER [2-3] )(.\d?)(:)/g;
+const borewellWaterRegex: RegExp = /(ALLOT_WATER [2-3] \d:)(.\d?)(\\n)/g;
+const guestsRegex: RegExp = /(ADD_GUESTS )(.\d?)(\\n)/g;
 
 export const getBhkType = (textFileData: string): number => {
   if (textFileData.match(bhkTypeRegex)) {
@@ -46,7 +46,7 @@ export const getGuests = (textFileData: string): number => {
 };
 
 export const tankerWaterRate = (guests: number): number => {
-  const tankerWaterConsumption = guests;
+  const tankerWaterConsumption = guests * 10 * 30;
   if (tankerWaterConsumption > 3000) {
     return 500 * 2 + 1000 * 3 + 1500 * 5 + (tankerWaterConsumption - 3000) * 8;
   } else if (tankerWaterConsumption > 1500) {
@@ -75,3 +75,4 @@ export const getBhkRatioRate = (
 export const getAllWaterUse = (bhkType: number, guests: number): number => {
   return (bhkType === 2 ? 900 : 1500) + guests * 10 * 30;
 }
+
