@@ -37,6 +37,7 @@ const Home: NextPage = () => {
             ) + tankerWaterRate(getGuests(text));
 
           setResult(allWater + ":" + allRate);
+          console.log(allWater + " " + allRate);
         } else {
           console.log("error file");
           alert("wrong file");

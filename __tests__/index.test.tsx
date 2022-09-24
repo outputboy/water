@@ -25,6 +25,16 @@ describe("Home", () => {
   });
 });
 
+/*
+INPUT:
+ALLOT_WATER 2 3:7
+ADD_GUESTS 2
+ADD_GUESTS 3
+BILL
+
+OUTPUT:
+2400 5215
+*/
 describe("get bhk type", () => {
   it("returns 2 or 3 for bhk type", () => {
     const text = "ALLOT_WATER 2 3:7";
